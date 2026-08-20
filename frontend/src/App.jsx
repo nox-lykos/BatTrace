@@ -11,7 +11,7 @@ import {
 } from "recharts";
 import { Html5Qrcode } from "html5-qrcode";
 
-const API = "http://127.0.0.1:8000";
+const API = "https://battrace.onrender.com";
 
 const BATTERIES = [
   "B0005",
