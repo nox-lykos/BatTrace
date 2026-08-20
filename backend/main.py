@@ -7,24 +7,64 @@ from fastapi.middleware.cors import CORSMiddleware
 
 
 # ============================================================
-# PROJECT PATH
+# PROJECT PATHS
 # ============================================================
+
+# Project structure:
+#
+# batHealth/
+# ├── backend/
+# │   ├── main.py
+# │   └── requirements.txt
+# ├── data/
+# │   └── processed/
+# ├── models/
+# │   └── soh_model.pkl
+# └── src/
+#     └── predictModel.py
+#
+# main.py is inside backend/
+# Therefore parent.parent = project root
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 SRC_DIR = PROJECT_ROOT / "src"
+DATA_DIR = PROJECT_ROOT / "data"
+PROCESSED_DIR = DATA_DIR / "processed"
+MODELS_DIR = PROJECT_ROOT / "models"
 
-sys.path.append(str(SRC_DIR))
+
+# ============================================================
+# ADD SRC TO PYTHON PATH
+# ============================================================
+
+if str(SRC_DIR) not in sys.path:
+    sys.path.insert(0, str(SRC_DIR))
 
 
 # ============================================================
 # IMPORT MODEL FUNCTIONS
 # ============================================================
 
-from predictModel import (
-    predict_battery,
-    forecast_battery
-)
+try:
+    from predictModel import (
+        predict_battery,
+        forecast_battery
+    )
+
+except ImportError as error:
+    raise ImportError(
+        f"Could not import predictModel.py from {SRC_DIR}. "
+        f"Original error: {error}"
+    )
+
+
+# ============================================================
+# DATA FILES
+# ============================================================
+
+SOH_FILE = PROCESSED_DIR / "battery_soh.csv"
+MODEL_DATA_FILE = PROCESSED_DIR / "model_data.csv"
 
 
 # ============================================================
@@ -52,19 +92,7 @@ app.add_middleware(
 
 
 # ============================================================
-# DATA FILE
-# ============================================================
-
-SOH_FILE = (
-    PROJECT_ROOT
-    / "data"
-    / "processed"
-    / "battery_soh.csv"
-)
-
-
-# ============================================================
-# ROOT
+# ROOT / HEALTH CHECK
 # ============================================================
 
 @app.get("/")
@@ -134,6 +162,7 @@ def get_battery_history(battery_id: str):
             SOH_FILE
         )
 
+        # Find battery
         battery_data = df[
             df["battery_id"]
             .astype(str)
@@ -148,10 +177,12 @@ def get_battery_history(battery_id: str):
                 detail=f"Battery {battery_id} not found"
             )
 
+        # Keep required columns
         history = battery_data[
             ["cycle", "soh"]
         ].copy()
 
+        # Sort by cycle
         history = history.sort_values(
             "cycle"
         )
@@ -218,12 +249,10 @@ def get_battery_forecast(
 # YEAR-WISE BATTERY HEALTH
 # ============================================================
 
-# ============================================================
-# YEAR-WISE BATTERY HEALTH
-# ============================================================
-
 @app.get("/battery/{battery_id}/yearly-health")
-def get_yearly_health(battery_id: str):
+def get_yearly_health(
+    battery_id: str
+):
 
     if not SOH_FILE.exists():
 
@@ -234,10 +263,12 @@ def get_yearly_health(battery_id: str):
 
     try:
 
-        df = pd.read_csv(SOH_FILE)
+        df = pd.read_csv(
+            SOH_FILE
+        )
 
         # ----------------------------------------------------
-        # Find battery
+        # FIND BATTERY
         # ----------------------------------------------------
 
         battery_data = df[
@@ -255,7 +286,7 @@ def get_yearly_health(battery_id: str):
             )
 
         # ----------------------------------------------------
-        # Check required columns
+        # CHECK REQUIRED COLUMNS
         # ----------------------------------------------------
 
         required_columns = [
@@ -273,23 +304,35 @@ def get_yearly_health(battery_id: str):
                 )
 
         # ----------------------------------------------------
-        # Clean data
+        # CLEAN DATA
         # ----------------------------------------------------
 
         battery_data = battery_data.dropna(
-            subset=["cycle", "soh"]
+            subset=[
+                "cycle",
+                "soh"
+            ]
         )
 
         battery_data["cycle"] = pd.to_numeric(
-            battery_data["cycle"]
+            battery_data["cycle"],
+            errors="coerce"
         )
 
         battery_data["soh"] = pd.to_numeric(
-            battery_data["soh"]
+            battery_data["soh"],
+            errors="coerce"
+        )
+
+        battery_data = battery_data.dropna(
+            subset=[
+                "cycle",
+                "soh"
+            ]
         )
 
         # ----------------------------------------------------
-        # Define operational year
+        # DEFINE OPERATIONAL YEAR
         #
         # 100 battery cycles = 1 operational year
         # ----------------------------------------------------
@@ -299,7 +342,7 @@ def get_yearly_health(battery_id: str):
         ) + 1
 
         # ----------------------------------------------------
-        # Calculate yearly statistics
+        # YEARLY STATISTICS
         # ----------------------------------------------------
 
         yearly = (
@@ -314,16 +357,12 @@ def get_yearly_health(battery_id: str):
             .reset_index()
         )
 
-        # ----------------------------------------------------
-        # Sort
-        # ----------------------------------------------------
-
         yearly = yearly.sort_values(
             "year"
         )
 
         # ----------------------------------------------------
-        # Create response
+        # BUILD RESPONSE
         # ----------------------------------------------------
 
         result = []
@@ -349,9 +388,13 @@ def get_yearly_health(battery_id: str):
 
             result.append({
 
-                "year": int(row["year"]),
+                "year": int(
+                    row["year"]
+                ),
 
-                "label": f"Year {int(row['year'])}",
+                "label": (
+                    f"Year {int(row['year'])}"
+                ),
 
                 "average_soh": round(
                     average_soh,
@@ -376,7 +419,7 @@ def get_yearly_health(battery_id: str):
             })
 
         # ----------------------------------------------------
-        # Final response
+        # FINAL RESPONSE
         # ----------------------------------------------------
 
         return {
