@@ -6,7 +6,7 @@ import {
 import { Html5Qrcode } from "html5-qrcode";
 
 /*
-  BATTRACE SIH UPGRADE
+  BAT HEALTH SIH UPGRADE
 
   New frontend features:
   - Explicit "Estimated, Not Certified" messaging
@@ -62,7 +62,7 @@ function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(() => {
     try {
-      return localStorage.getItem("battrace-theme") === "dark";
+      return localStorage.getItem("bat-health-theme") === "dark";
     } catch {
       return false;
     }
@@ -73,7 +73,7 @@ function App() {
     document.documentElement.classList.remove("bt-preload-dark");
     document.body.classList.toggle("bt-dark", darkMode);
     try {
-      localStorage.setItem("battrace-theme", darkMode ? "dark" : "light");
+      localStorage.setItem("bat-health-theme", darkMode ? "dark" : "light");
     } catch {}
     return () => document.body.classList.remove("bt-dark");
   }, [darkMode]);
@@ -153,7 +153,7 @@ function App() {
     console.log("Decoded battery ID:", scannedId);
 
     if (!BATTERIES.includes(scannedId)) {
-      setError(`Battery "${scannedId}" is not registered in BatTrace.`);
+      setError(`Battery "${scannedId}" is not registered in Bat Health.`);
       return;
     }
 
@@ -452,7 +452,7 @@ function App() {
     return (
       <div style={S.loading}>
         <div style={{ fontSize: 55 }}>🔋</div>
-        <h2>BatTrace</h2>
+        <h2>Bat Health</h2>
         <p>Loading battery intelligence...</p>
         <div style={S.loader} />
       </div>
@@ -566,7 +566,7 @@ function App() {
         <div style={S.brand}>
           <div style={S.brandIcon}>⚡</div>
           <div className="bt-brand-copy">
-            <div style={S.brandName}>BATT<span>RACE</span></div>
+            <div style={S.brandName}>BAT <span>HEALTH</span></div>
             <div style={S.brandSub}>
               Battery Health, Safety &amp; Second-Life Passport
             </div>
@@ -629,7 +629,7 @@ function App() {
         <div className="bt-sidebar-note" style={S.sidebarNote}>
           <strong>🛡 Estimate, Not Certification</strong>
           <p>
-            BatTrace provides AI-based estimates and recommendations. It does
+            Bat Health provides AI-based estimates and recommendations. It does
             not replace certified battery testing or diagnostics.
           </p>
         </div>
@@ -650,7 +650,7 @@ function App() {
             ☰
           </button>
           <div>
-            <div style={S.mobileBrand}>⚡ BATTRACE</div>
+            <div style={S.mobileBrand}>⚡ BAT HEALTH</div>
             <div className="bt-header-title" style={S.headerTitle}>{pageTitle(activeTab)}</div>
           </div>
 
@@ -705,7 +705,7 @@ function App() {
 
           <section className="bt-hero bt-hero-clean" style={S.hero}>
             <div className="bt-hero-content" style={S.heroContent}>
-              <div style={S.heroEyebrow}>WELCOME TO BATTRACE</div>
+              <div style={S.heroEyebrow}>WELCOME TO BAT HEALTH</div>
               <h1 style={S.heroTitle}>
                 Understand. <span>Extend.</span> <b>Reuse.</b>
               </h1>
@@ -857,7 +857,7 @@ function App() {
           )}
 
           <footer className="bt-footer" style={S.footer}>
-            <span>© 2026 BATTRACE</span>
+            <span>© 2026 BAT HEALTH</span>
             <span>AI estimates • Lifecycle intelligence • Sustainable reuse</span>
             <span>Certified testing remains authoritative</span>
           </footer>
@@ -1023,7 +1023,7 @@ function calculateRecommendations({ soh, temperature, risk, factors }) {
     items.push({
       priority: "URGENT",
       title: "Seek certified diagnostics",
-      text: "BatTrace detects elevated risk indicators. Do not treat this estimate as a safety certification.",
+      text: "Bat Health detects elevated risk indicators. Do not treat this estimate as a safety certification.",
     });
   }
 
@@ -1130,11 +1130,11 @@ function createPassport({
       decision: secondLife.decision,
     },
     verification: {
-      method: "Deterministic BatTrace passport fingerprint",
+      method: "Deterministic Bat Health passport fingerprint",
       note: "This verifies the integrity of the generated passport record. It is not laboratory certification.",
     },
     disclaimer:
-      "BatTrace values are AI/data-driven estimates and recommendations. Certified battery testing and manufacturer diagnostics remain authoritative.",
+      "Bat Health values are AI/data-driven estimates and recommendations. Certified battery testing and manufacturer diagnostics remain authoritative.",
   };
 }
 
@@ -1612,7 +1612,7 @@ function SafetyPage({ risk, soh, temperature, current, cycle }) {
           <div style={S.cardEyebrow}>ESTIMATION LIMITATION</div>
           <h2 style={S.sectionTitle}>Estimate ≠ certification</h2>
           <p style={S.text}>
-            BatTrace can flag risk patterns but cannot certify a battery as
+            Bat Health can flag risk patterns but cannot certify a battery as
             safe. Physical inspection, BMS diagnostics and laboratory testing
             remain authoritative.
           </p>
@@ -1906,7 +1906,7 @@ function ImportModal({ importedFile, error, onFile, onClose }) {
                 <div style={{ ...S.note, marginTop: 10 }}>
                   <strong>Image ingestion</strong>
                   <p style={{ ...S.text, marginBottom: 0 }}>
-                    No readable BatTrace QR code was found in this image.
+                    No readable Bat Health QR code was found in this image.
                     The image is still accepted and previewed locally.
                     OCR/image extraction can be connected to the backend for
                     diagnostic-value extraction.
@@ -2043,7 +2043,7 @@ function QRScanner({ onResult, onClose }) {
         <div style={{ fontSize: 45, color: "var(--bt-blue)" }}>▣</div>
         <h3>Scan the battery QR code</h3>
         <p style={S.text}>
-          BatTrace will identify the registered battery and retrieve its health
+          Bat Health will identify the registered battery and retrieve its health
           information.
         </p>
       </div>
