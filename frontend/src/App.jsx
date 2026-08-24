@@ -810,7 +810,7 @@ function App() {
             <SecondLifePage
               secondLife={secondLife}
               soh={soh}
-              risk={risk}
+              risk={risk.cycle}
               cycle={cycle}
             />
           )}
