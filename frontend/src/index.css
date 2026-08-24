@@ -8,22 +8,128 @@
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
 
-  background: #07111f;
-  color: #f8fafc;
+  --bt-bg: #f5f7fb;
+  --bt-surface: #ffffff;
+  --bt-surface-2: #f8fafc;
+  --bt-text: #172033;
+  --bt-text-secondary: #475569;
+  --bt-muted: #64748b;
+  --bt-muted-2: #94a3b8;
+  --bt-heading: #173b67;
+  --bt-border: #e2e8f0;
+  --bt-border-soft: #eef2f7;
+  --bt-border-soft-2: #f1f5f9;
+  --bt-border-strong: #cbd5e1;
+  --bt-blue: #2563eb;
+  --bt-blue-deep: #1e40af;
+  --bt-blue-soft: #eff6ff;
+  --bt-blue-border: #bfdbfe;
+  --bt-green: #16a34a;
+  --bt-green-deep: #15803d;
+  --bt-green-soft: #f0fdf4;
+  --bt-green-border: #bbf7d0;
+  --bt-orange: #d97706;
+  --bt-purple: #7c3aed;
+  --bt-red: #dc2626;
+  --bt-orange-deep: #ea580c;
+  --bt-warning: #b45309;
+  --bt-warning-text: #92400e;
+  --bt-warning-soft: #fffbeb;
+  --bt-warning-bg: #fefce8;
+  --bt-warning-border: #fde68a;
+  --bt-error-bg: #fff7ed;
+  --bt-error-border: #fed7aa;
+  --bt-error-text: #c2410c;
+  --bt-chart-blue: #1687c5;
+  --bt-chart-cyan: #38bdf8;
+  --bt-chart-grid: #e8eef5;
+  --bt-chart-muted: #8290a3;
+  --bt-chart-muted-2: #8a97a8;
+  --bt-chart-secondary: #68778a;
+  --bt-chart-soft: #f7f9fc;
+  --bt-purple-soft: #f2edff;
+  --bt-chart-blue-dark: #315477;
+  --bt-chart-surface: #172337;
+  --bt-chart-deep: #0d1929;
+
+  background: var(--bt-bg);
+  color: var(--bt-text);
+  color-scheme: light;
 }
 
-html {
-  background: #07111f;
+html.bt-preload-dark {
+  background: #070b12;
+  color-scheme: dark;
+}
+
+html.bt-preload-dark body {
+  background: #070b12;
+  color: #f8fafc;
 }
 
 body {
   min-width: 320px;
   min-height: 100vh;
   background:
-    radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.12), transparent 30%),
-    radial-gradient(circle at 90% 20%, rgba(34, 211, 238, 0.08), transparent 30%),
-    #07111f;
-  color: #f8fafc;
+    radial-gradient(circle at 20% 0%, rgba(37, 99, 235, 0.08), transparent 30%),
+    radial-gradient(circle at 90% 20%, rgba(34, 211, 238, 0.06), transparent 30%),
+    var(--bt-bg);
+  color: var(--bt-text);
+  transition: background .25s ease, color .25s ease;
+}
+
+body.bt-dark {
+  --bt-bg: #070b12;
+  --bt-surface: #0f141c;
+  --bt-surface-2: #151b24;
+  --bt-text: #f8fafc;
+  --bt-text-secondary: #cbd5e1;
+  --bt-muted: #94a3b8;
+  --bt-muted-2: #64748b;
+  --bt-heading: #f8fafc;
+  --bt-border: #263244;
+  --bt-border-soft: #202b3b;
+  --bt-border-soft-2: #1b2533;
+  --bt-border-strong: #344256;
+  --bt-blue: #60a5fa;
+  --bt-blue-deep: #93c5fd;
+  --bt-blue-soft: #10243b;
+  --bt-blue-border: #244b76;
+  --bt-green: #84cc16;
+  --bt-green-deep: #a3e635;
+  --bt-green-soft: #122414;
+  --bt-green-border: #31551b;
+  --bt-orange: #f59e0b;
+  --bt-purple: #a78bfa;
+  --bt-red: #fb7185;
+  --bt-orange-deep: #fb923c;
+  --bt-warning: #f59e0b;
+  --bt-warning-text: #fbbf24;
+  --bt-warning-soft: #2a2108;
+  --bt-warning-bg: #241d08;
+  --bt-warning-border: #624b12;
+  --bt-error-bg: #2b1515;
+  --bt-error-border: #6b2a2a;
+  --bt-error-text: #fb7185;
+  --bt-chart-blue: #38bdf8;
+  --bt-chart-cyan: #38bdf8;
+  --bt-chart-grid: #263752;
+  --bt-chart-muted: #94a3b8;
+  --bt-chart-muted-2: #7f91aa;
+  --bt-chart-secondary: #cbd5e1;
+  --bt-chart-soft: #111d2e;
+  --bt-purple-soft: #2a1d45;
+  --bt-chart-blue-dark: #315477;
+  --bt-chart-surface: #172337;
+  --bt-chart-deep: #0d1929;
+  color-scheme: dark;
+  background: var(--bt-bg);
+  color: var(--bt-text);
+}
+
+html {
+  background: var(--bt-bg);
+  transition: background .25s ease;
 }
 
 button,

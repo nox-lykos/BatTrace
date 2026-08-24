@@ -105,7 +105,7 @@ function ForecastChart({ batteryId }) {
           >
 
             <CartesianGrid
-              stroke="#e8eef5"
+              stroke="var(--bt-chart-grid)"
               strokeDasharray="4 4"
               vertical={false}
             />
@@ -113,11 +113,11 @@ function ForecastChart({ batteryId }) {
             <XAxis
               dataKey="cycle"
               tick={{
-                fill: "#8290a3",
+                fill: "var(--bt-chart-muted)",
                 fontSize: 10,
               }}
               axisLine={{
-                stroke: "#dce4ec",
+                stroke: "var(--bt-border)",
               }}
               tickLine={false}
             />
@@ -125,7 +125,7 @@ function ForecastChart({ batteryId }) {
             <YAxis
               domain={[0, 100]}
               tick={{
-                fill: "#8290a3",
+                fill: "var(--bt-chart-muted)",
                 fontSize: 10,
               }}
               axisLine={false}
@@ -134,8 +134,8 @@ function ForecastChart({ batteryId }) {
 
             <Tooltip
               contentStyle={{
-                background: "#ffffff",
-                border: "1px solid #dce5ee",
+                background: "var(--bt-surface)",
+                border: "1px solid var(--bt-border)",
                 borderRadius: "12px",
                 boxShadow:
                   "0 8px 25px rgba(30,50,80,0.10)",
@@ -149,19 +149,19 @@ function ForecastChart({ batteryId }) {
             <Line
               type="monotone"
               dataKey="soh"
-              stroke="#8b5cf6"
+              stroke="var(--bt-purple)"
               strokeWidth={3}
               strokeDasharray="7 5"
               dot={{
                 r: 3,
-                fill: "#ffffff",
-                stroke: "#8b5cf6",
+                fill: "var(--bt-surface)",
+                stroke: "var(--bt-purple)",
                 strokeWidth: 2,
               }}
               activeDot={{
                 r: 6,
-                fill: "#ffffff",
-                stroke: "#8b5cf6",
+                fill: "var(--bt-surface)",
+                stroke: "var(--bt-purple)",
                 strokeWidth: 3,
               }}
             />
@@ -185,8 +185,8 @@ function ForecastChart({ batteryId }) {
 const styles = {
 
   card: {
-    background: "#ffffff",
-    border: "1px solid #e5eaf0",
+    background: "var(--bt-surface)",
+    border: "1px solid var(--bt-border)",
     borderRadius: "22px",
     padding: "18px 14px 14px",
     boxShadow:
@@ -202,7 +202,7 @@ const styles = {
 
   label: {
     margin: 0,
-    color: "#8a97a8",
+    color: "var(--bt-chart-muted-2)",
     fontSize: "9px",
     fontWeight: 800,
     letterSpacing: "1px",
@@ -211,12 +211,12 @@ const styles = {
   title: {
     margin: "4px 0 0",
     fontSize: "17px",
-    color: "#172033",
+    color: "var(--bt-text)",
   },
 
   forecastBadge: {
-    background: "#f2edff",
-    color: "#7c3aed",
+    background: "var(--bt-purple-soft)",
+    color: "var(--bt-purple)",
     padding: "7px 9px",
     borderRadius: "12px",
     fontSize: "9px",
@@ -227,7 +227,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "space-between",
-    background: "#f7f9fc",
+    background: "var(--bt-chart-soft)",
     borderRadius: "15px",
     padding: "13px",
     marginBottom: "10px",
@@ -235,7 +235,7 @@ const styles = {
 
   smallLabel: {
     margin: 0,
-    color: "#8a97a8",
+    color: "var(--bt-chart-muted-2)",
     fontSize: "8px",
     fontWeight: 800,
     letterSpacing: "0.8px",
@@ -245,19 +245,19 @@ const styles = {
     display: "block",
     marginTop: "4px",
     fontSize: "18px",
-    color: "#1687c5",
+    color: "var(--bt-chart-blue)",
   },
 
   projectedValue: {
     display: "block",
     marginTop: "4px",
     fontSize: "18px",
-    color: "#7c3aed",
+    color: "var(--bt-purple)",
   },
 
   arrow: {
     fontSize: "20px",
-    color: "#a0aaba",
+    color: "var(--bt-muted-2)",
   },
 
   chartContainer: {
@@ -267,7 +267,7 @@ const styles = {
 
   description: {
     margin: "5px 0 0",
-    color: "#9aa6b5",
+    color: "var(--bt-muted-2)",
     textAlign: "center",
     fontSize: "9px",
   },

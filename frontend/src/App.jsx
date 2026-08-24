@@ -60,7 +60,23 @@ function App() {
   const [copied, setCopied] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem("battrace-theme") === "dark";
+    } catch {
+      return false;
+    }
+  });
   const qrUploadRef = useRef(null);
+
+  useEffect(() => {
+    document.documentElement.classList.remove("bt-preload-dark");
+    document.body.classList.toggle("bt-dark", darkMode);
+    try {
+      localStorage.setItem("battrace-theme", darkMode ? "dark" : "light");
+    } catch {}
+    return () => document.body.classList.remove("bt-dark");
+  }, [darkMode]);
 
   useEffect(() => {
     loadBattery(batteryId);
@@ -457,11 +473,27 @@ function App() {
   }
 
   return (
-    <div style={S.app}>
+    <div className={`bt-app ${darkMode ? "bt-theme-dark" : "bt-theme-light"}`} style={S.app}>
       <style>{`
 .bt-action-icon{width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;font-size:14px;line-height:1}.bt-primary-action .bt-action-icon{background:rgba(255,255,255,.18)}.bt-upload-action .bt-action-icon{background:rgba(255,255,255,.10)}
 @media (max-width:640px){.bt-main-content{padding:14px 12px 28px!important}.bt-hero-clean{min-height:0!important;padding:22px 18px!important;border-radius:16px!important;margin-bottom:12px!important}.bt-hero-content{max-width:none!important}.bt-hero-actions{display:grid!important;grid-template-columns:1fr 1fr;gap:9px!important;margin-top:18px!important}.bt-hero-action{width:100%!important;padding:11px 8px!important;font-size:10px!important;min-height:44px!important}.bt-hero-clean h1{font-size:29px!important;letter-spacing:-1.3px!important;margin:7px 0 8px!important}.bt-hero-clean p{font-size:11px!important;line-height:1.5!important}.bt-hero-clean .bt-action-icon{width:20px;height:20px;font-size:13px}}
 
+        .bt-theme-toggle{
+          display:inline-flex;align-items:center;gap:7px;height:34px;padding:0 11px;border-radius:999px;
+          border:1px solid var(--bt-border);background:var(--bt-surface);color:var(--bt-text);
+          font-size:10px;font-weight:850;cursor:pointer;transition:all .2s ease;
+        }
+        .bt-theme-toggle:hover{transform:translateY(-1px);border-color:var(--bt-blue);box-shadow:0 5px 16px rgba(15,23,42,.10)}
+        .bt-theme-toggle-icon{font-size:15px;line-height:1}
+        .bt-theme-toggle-label{letter-spacing:.2px}
+        .bt-theme-dark .bt-theme-toggle{background:#111827;border-color:#263244;color:#f8fafc}
+        .bt-theme-dark .bt-sidebar-note{background:#111827!important;border-color:#263244!important;color:#84cc16!important}
+        .bt-theme-dark .bt-bottom-nav{background:rgba(15,23,42,.97)!important;border-color:#263244!important}
+        .bt-theme-dark .bt-bottom-nav button{color:#94a3b8!important}
+        .bt-theme-dark .bt-bottom-nav button.active{background:#13251a!important;color:#84cc16!important}
+        .bt-theme-dark .bt-mobile-overlay{background:rgba(2,6,23,.72)!important}
+        .bt-theme-dark .recharts-default-tooltip{background:#111827!important;border:1px solid #263244!important;color:#f8fafc!important;box-shadow:0 12px 30px rgba(0,0,0,.35)!important}
+        .bt-theme-dark .recharts-tooltip-label,.bt-theme-dark .recharts-tooltip-item{color:#e2e8f0!important}
         @keyframes btspin { to { transform: rotate(360deg); } }
         * { box-sizing: border-box; }
         button,input,select { font: inherit; }
@@ -581,8 +613,8 @@ function App() {
           className="bt-collapse-button"
           onClick={() => setSidebarCollapsed((v) => !v)}
           style={{
-            marginTop: 10, border: "1px solid #e2e8f0", background: "#fff",
-            color: "#64748b", borderRadius: 9, padding: "9px 10px",
+            marginTop: 10, border: "1px solid var(--bt-border)", background: "var(--bt-surface)",
+            color: "var(--bt-muted)", borderRadius: 9, padding: "9px 10px",
             cursor: "pointer", display: "flex", alignItems: "center",
             justifyContent: "center", gap: 8, fontSize: 10, fontWeight: 800,
           }}
@@ -610,7 +642,7 @@ function App() {
             onClick={() => setMobileMenuOpen(true)}
             style={{
               width: 38, height: 38, borderRadius: 10, border: "1px solid #dbe3ec",
-              background: "#fff", color: "#173b67", fontSize: 20, cursor: "pointer",
+              background: "var(--bt-surface)", color: "var(--bt-heading)", fontSize: 20, cursor: "pointer",
               alignItems: "center", justifyContent: "center", flexShrink: 0,
             }}
             aria-label="Open navigation"
@@ -650,6 +682,15 @@ function App() {
                 </div>
               )}
             </div>
+            <button
+              className="bt-theme-toggle"
+              onClick={() => setDarkMode((value) => !value)}
+              aria-label={darkMode ? "Switch to light theme" : "Switch to dark theme"}
+              title={darkMode ? "Switch to light theme" : "Switch to dark theme"}
+            >
+              <span className="bt-theme-toggle-icon">{darkMode ? "☀" : "☾"}</span>
+              <span className="bt-theme-toggle-label">{darkMode ? "Light" : "Dark"}</span>
+            </button>
             <div style={S.onlineBadge}>● SYSTEM ONLINE</div>
           </div>
         </header>
@@ -925,8 +966,8 @@ function calculateRisk({ soh, temperature, cycle, current, battery }) {
     return {
       score: clamp(Math.round(score), 0, 100),
       level: "High",
-      color: "#dc2626",
-      bg: "#fef2f2",
+      color: "var(--bt-red)",
+      bg: "var(--bt-error-bg)",
       icon: "!",
       summary: "Elevated risk indicators detected. Certified diagnostics are recommended.",
     };
@@ -936,8 +977,8 @@ function calculateRisk({ soh, temperature, cycle, current, battery }) {
     return {
       score: clamp(Math.round(score), 0, 100),
       level: "Medium",
-      color: "#d97706",
-      bg: "#fffbeb",
+      color: "var(--bt-orange)",
+      bg: "var(--bt-warning-soft)",
       icon: "!",
       summary: "Some operating conditions may accelerate degradation or increase risk.",
     };
@@ -946,8 +987,8 @@ function calculateRisk({ soh, temperature, cycle, current, battery }) {
   return {
     score: Math.round(score),
     level: "Low",
-    color: "#16a34a",
-    bg: "#f0fdf4",
+    color: "var(--bt-green)",
+    bg: "var(--bt-green-soft)",
     icon: "✓",
     summary: "No major risk signal is visible in the currently available data.",
   };
@@ -1116,7 +1157,7 @@ function HealthCard({ soh, capacity, originalCapacity }) {
         <div>
           <div style={{ ...S.bigNumber, color }}>{soh.toFixed(1)}%</div>
           <div style={S.muted}>Estimated State of Health</div>
-          <div style={{ ...S.pill, color, background: `${color}12` }}>
+          <div style={{ ...S.pill, color, background: `color-mix(in srgb, ${color} 12%, transparent)` }}>
             ● {healthText(soh)}
           </div>
         </div>
@@ -1255,7 +1296,7 @@ function Factors({ factors }) {
             <PieChart>
               <Pie data={data} dataKey="value" innerRadius={42} outerRadius={65} paddingAngle={3}>
                 {data.map((_, i) => (
-                  <Cell key={i} fill={["#16a34a","#2563eb","#d97706","#7c3aed"][i % 4]} />
+                  <Cell key={i} fill={["var(--bt-green)","var(--bt-blue)","var(--bt-orange)","var(--bt-purple)"][i % 4]} />
                 ))}
               </Pie>
               <Tooltip />
@@ -1270,7 +1311,7 @@ function Factors({ factors }) {
                 <i style={{
                   display: "inline-block",
                   width: 7, height: 7, borderRadius: "50%",
-                  background: ["#16a34a","#2563eb","#d97706","#7c3aed"][i % 4],
+                  background: ["var(--bt-green)","var(--bt-blue)","var(--bt-orange)","var(--bt-purple)"][i % 4],
                   marginRight: 6,
                 }} />
                 {x.name}
@@ -1378,12 +1419,12 @@ function Charts({ history, forecast }) {
           <div style={S.chart}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={hd}>
-                <CartesianGrid stroke="#e5e7eb" strokeDasharray="4 4" />
-                <XAxis dataKey="cycle" tick={{ fill: "#64748b", fontSize: 10 }} />
-                <YAxis domain={[0, 100]} tick={{ fill: "#64748b", fontSize: 10 }} />
+                <CartesianGrid stroke="var(--bt-chart-grid)" strokeDasharray="4 4" />
+                <XAxis dataKey="cycle" tick={{ fill: "var(--bt-muted)", fontSize: 10 }} />
+                <YAxis domain={[0, 100]} tick={{ fill: "var(--bt-muted)", fontSize: 10 }} />
                 <Tooltip />
-                <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="soh" stroke="#2563eb" strokeWidth={3} dot={false} />
+                <ReferenceLine y={80} stroke="var(--bt-green)" strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="soh" stroke="var(--bt-blue)" strokeWidth={3} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -1401,12 +1442,12 @@ function Charts({ history, forecast }) {
           <div style={S.chart}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={fd}>
-                <CartesianGrid stroke="#e5e7eb" strokeDasharray="4 4" />
-                <XAxis dataKey="cycle" tick={{ fill: "#64748b", fontSize: 10 }} />
-                <YAxis domain={[0, 100]} tick={{ fill: "#64748b", fontSize: 10 }} />
+                <CartesianGrid stroke="var(--bt-chart-grid)" strokeDasharray="4 4" />
+                <XAxis dataKey="cycle" tick={{ fill: "var(--bt-muted)", fontSize: 10 }} />
+                <YAxis domain={[0, 100]} tick={{ fill: "var(--bt-muted)", fontSize: 10 }} />
                 <Tooltip />
-                <ReferenceLine y={80} stroke="#16a34a" strokeDasharray="5 5" />
-                <Line type="monotone" dataKey="soh" stroke="#d97706" strokeWidth={3} dot={false} />
+                <ReferenceLine y={80} stroke="var(--bt-green)" strokeDasharray="5 5" />
+                <Line type="monotone" dataKey="soh" stroke="var(--bt-orange)" strokeWidth={3} dot={false} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -1445,8 +1486,8 @@ function Recommendations({ items, onClick }) {
 function Priority({ value }) {
   const map = {
     URGENT: ["#dc2626", "#fef2f2"],
-    HIGH: ["#d97706", "#fffbeb"],
-    NORMAL: ["#2563eb", "#eff6ff"],
+    HIGH: ["var(--bt-orange)", "var(--bt-warning-soft)"],
+    NORMAL: ["var(--bt-blue)", "var(--bt-blue-soft)"],
   };
   const [color, bg] = map[value] || map.NORMAL;
 
@@ -1702,7 +1743,7 @@ function SecondLifePage({ secondLife, soh, risk, cycle }) {
           {apps.map(([name, ok]) => (
             <div style={S.detailRow} key={name}>
               <span>{name}</span>
-              <strong style={{ color: ok ? "#16a34a" : "#64748b" }}>
+              <strong style={{ color: ok ? "var(--bt-green)" : "var(--bt-muted)" }}>
                 {ok ? "Potentially suitable" : "Not preferred"}
               </strong>
             </div>
@@ -1841,8 +1882,8 @@ function ImportModal({ importedFile, error, onFile, onClose }) {
                 </p>
 
                 <div style={{
-                  background: "#f8fafc",
-                  border: "1px solid #dbe5f0",
+                  background: "var(--bt-surface-2)",
+                  border: "1px solid var(--bt-border)",
                   borderRadius: 14,
                   padding: 10,
                   display: "flex",
@@ -1999,7 +2040,7 @@ function QRScanner({ onResult, onClose }) {
       </div>
 
       <div style={{ textAlign: "center", maxWidth: 390, margin: "25px auto" }}>
-        <div style={{ fontSize: 45, color: "#2563eb" }}>▣</div>
+        <div style={{ fontSize: 45, color: "var(--bt-blue)" }}>▣</div>
         <h3>Scan the battery QR code</h3>
         <p style={S.text}>
           BatTrace will identify the registered battery and retrieve its health
@@ -2013,10 +2054,10 @@ function QRScanner({ onResult, onClose }) {
 }
 
 function healthColor(soh) {
-  if (soh >= 80) return "#16a34a";
-  if (soh >= 60) return "#d97706";
-  if (soh >= 40) return "#ea580c";
-  return "#dc2626";
+  if (soh >= 80) return "var(--bt-green)";
+  if (soh >= 60) return "var(--bt-orange)";
+  if (soh >= 40) return "var(--bt-orange-deep)";
+  return "var(--bt-red)";
 }
 
 function healthText(soh) {
@@ -2029,47 +2070,47 @@ function healthText(soh) {
 const S = {
   app: {
     minHeight: "100vh",
-    background: "#f5f7fb",
-    color: "#172033",
+    background: "var(--bt-bg)",
+    color: "var(--bt-text)",
     fontFamily: "Inter,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif",
   },
 
   sidebar: {
     position: "fixed", left: 0, top: 0, bottom: 0, width: 248,
-    background: "#fff", borderRight: "1px solid #e2e8f0",
+    background: "var(--bt-surface)", borderRight: "1px solid var(--bt-border)",
     padding: "22px 14px", zIndex: 20, display: "flex",
     flexDirection: "column",
   },
 
   brand: {
     display: "flex", alignItems: "center", gap: 10,
-    padding: "4px 8px 20px", borderBottom: "1px solid #eef2f7",
+    padding: "4px 8px 20px", borderBottom: "1px solid var(--bt-border-soft)",
   },
 
   brandIcon: {
     width: 38, height: 38, borderRadius: 11,
-    background: "#eff6ff", color: "#2563eb",
+    background: "var(--bt-blue-soft)", color: "var(--bt-blue)",
     display: "flex", alignItems: "center", justifyContent: "center",
   },
 
-  brandName: { fontSize: 18, fontWeight: 900, color: "#173b67" },
-  brandSub: { fontSize: 9, color: "#94a3b8", maxWidth: 155, marginTop: 3 },
+  brandName: { fontSize: 18, fontWeight: 900, color: "var(--bt-heading)" },
+  brandSub: { fontSize: 9, color: "var(--bt-muted-2)", maxWidth: 155, marginTop: 3 },
 
   nav: { display: "flex", flexDirection: "column", gap: 4, marginTop: 18 },
 
   navItem: {
-    border: 0, background: "transparent", color: "#64748b",
+    border: 0, background: "transparent", color: "var(--bt-muted)",
     borderRadius: 9, padding: "11px 10px",
     display: "flex", alignItems: "center", gap: 10,
     textAlign: "left", cursor: "pointer", fontSize: 12, fontWeight: 650,
   },
 
-  navActive: { background: "#eff6ff", color: "#2563eb", fontWeight: 850 },
+  navActive: { background: "var(--bt-blue-soft)", color: "var(--bt-blue)", fontWeight: 850 },
 
   sidebarNote: {
-    marginTop: "auto", background: "#f8fafc",
-    border: "1px solid #e2e8f0", borderRadius: 12, padding: 12,
-    color: "#2563eb", fontSize: 10,
+    marginTop: "auto", background: "var(--bt-surface-2)",
+    border: "1px solid var(--bt-border)", borderRadius: 12, padding: 12,
+    color: "var(--bt-blue)", fontSize: 10,
   },
 
   mainWrap: { marginLeft: 248, minHeight: "100vh" },
@@ -2077,41 +2118,41 @@ const S = {
   header: {
     position: "sticky", top: 0, zIndex: 10,
     minHeight: 70, padding: "12px 28px",
-    background: "rgba(255,255,255,.95)",
+    background: "var(--bt-surface)",
     backdropFilter: "blur(12px)",
-    borderBottom: "1px solid #e2e8f0",
+    borderBottom: "1px solid var(--bt-border)",
     display: "flex", alignItems: "center",
     justifyContent: "space-between", gap: 15,
   },
 
-  mobileBrand: { display: "none", fontWeight: 900, color: "#173b67", fontSize: 13 },
-  headerTitle: { fontSize: 18, fontWeight: 850 },
+  mobileBrand: { display: "none", fontWeight: 900, color: "var(--bt-heading)", fontSize: 13 },
+  headerTitle: { fontSize: 18, fontWeight: 850, color: "var(--bt-heading)" },
   headerRight: { display: "flex", alignItems: "center", gap: 10 },
 
   search: {
     position: "relative", width: 255,
     display: "flex", alignItems: "center", gap: 7,
-    border: "1px solid #dbe3ec", borderRadius: 9,
-    padding: "8px 10px", background: "#fff",
+    border: "1px solid var(--bt-border)", borderRadius: 9,
+    padding: "8px 10px", background: "var(--bt-surface)",
   },
 
-  searchInput: { border: 0, outline: 0, width: "100%", fontSize: 11, color: "#172033" },
+  searchInput: { border: 0, outline: 0, width: "100%", fontSize: 11, color: "var(--bt-text)" },
 
   searchResults: {
     position: "absolute", left: 0, right: 0, top: "calc(100% + 5px)",
-    background: "#fff", border: "1px solid #e2e8f0",
+    background: "var(--bt-surface)", border: "1px solid var(--bt-border)",
     borderRadius: 9, overflow: "hidden",
     boxShadow: "0 12px 30px rgba(15,23,42,.12)", zIndex: 50,
   },
 
   searchResult: {
-    width: "100%", border: 0, background: "#fff",
+    width: "100%", border: 0, background: "var(--bt-surface)",
     padding: 10, textAlign: "left", cursor: "pointer",
   },
 
   onlineBadge: {
-    color: "#15803d", background: "#f0fdf4",
-    border: "1px solid #bbf7d0", borderRadius: 999,
+    color: "var(--bt-green-deep)", background: "var(--bt-green-soft)",
+    border: "1px solid var(--bt-green-border)", borderRadius: 999,
     padding: "6px 9px", fontSize: 8, fontWeight: 850,
     whiteSpace: "nowrap",
   },
@@ -2122,9 +2163,9 @@ const S = {
     minHeight: 220,
     borderRadius: 18,
     padding: "30px 32px",
-    background: "#f7fafc",
-    color: "#172033",
-    border: "1px solid #dce7f3",
+    background: "var(--bt-surface-2)",
+    color: "var(--bt-text)",
+    border: "1px solid var(--bt-border)",
     display: "flex",
     alignItems: "center",
     justifyContent: "flex-start",
@@ -2137,7 +2178,7 @@ const S = {
   heroContent: { maxWidth: 720, width: "100%", position: "relative", zIndex: 2 },
 
   heroEyebrow: {
-    color: "#16a34a",
+    color: "var(--bt-green)",
     fontSize: 10,
     letterSpacing: 1.6,
     fontWeight: 900,
@@ -2148,28 +2189,28 @@ const S = {
     fontSize: "clamp(30px,4vw,50px)",
     lineHeight: 1.02,
     letterSpacing: "-2px",
-    color: "#172033",
+    color: "var(--bt-text)",
   },
 
   heroText: {
     maxWidth: 620,
-    color: "#64748b",
+    color: "var(--bt-muted)",
     fontSize: 13,
     lineHeight: 1.55,
     margin: 0,
   },
 
-  heroTitleSpan: { color: "#2563eb" },
+  heroTitleSpan: { color: "var(--bt-blue)" },
   heroArt: { display: "none" },
 
   actions: { display: "flex", gap: 10, marginTop: 20, flexWrap: "wrap" },
 
   greenButton: {
-    border: "1px solid #16a34a",
+    border: "1px solid var(--bt-green)",
     borderRadius: 10,
     padding: "12px 18px",
-    background: "#16a34a",
-    color: "#fff",
+    background: "var(--bt-green)",
+    color: "var(--bt-surface)",
     fontWeight: 850,
     fontSize: 11,
     cursor: "pointer",
@@ -2182,11 +2223,11 @@ const S = {
   },
 
   heroOutline: {
-    border: "1px solid #bfd2ea",
+    border: "1px solid var(--bt-blue-border)",
     borderRadius: 10,
     padding: "11px 17px",
-    background: "#fff",
-    color: "#1e40af",
+    background: "var(--bt-surface)",
+    color: "var(--bt-blue-deep)",
     fontWeight: 800,
     fontSize: 11,
     cursor: "pointer",
@@ -2198,22 +2239,22 @@ const S = {
   },
 
   activeBar: {
-    background: "#fff", border: "1px solid #e2e8f0",
+    background: "var(--bt-surface)", border: "1px solid var(--bt-border)",
     borderRadius: 12, padding: "12px 15px",
     display: "flex", alignItems: "center", gap: 15, marginBottom: 14,
   },
 
-  eyebrow: { color: "#64748b", fontSize: 8, fontWeight: 850, letterSpacing: 1.3 },
+  eyebrow: { color: "var(--bt-muted)", fontSize: 8, fontWeight: 850, letterSpacing: 1.3 },
 
   select: {
-    marginLeft: "auto", border: "1px solid #cbd5e1",
+    marginLeft: "auto", border: "1px solid var(--bt-border-strong)",
     borderRadius: 8, padding: "8px 10px",
-    background: "#fff", color: "#172033", fontWeight: 700,
+    background: "var(--bt-surface)", color: "var(--bt-text)", fontWeight: 700,
   },
 
   verified: {
-    color: "#15803d", background: "#f0fdf4",
-    border: "1px solid #bbf7d0", borderRadius: 999,
+    color: "var(--bt-green-deep)", background: "var(--bt-green-soft)",
+    border: "1px solid var(--bt-green-border)", borderRadius: 999,
     padding: "7px 10px", fontSize: 8, fontWeight: 850,
   },
 
@@ -2221,13 +2262,13 @@ const S = {
   grid2: { display: "grid", gridTemplateColumns: "repeat(2,minmax(0,1fr))", gap: 14, marginBottom: 14 },
 
   card: {
-    background: "#fff", border: "1px solid #e2e8f0",
+    background: "var(--bt-surface)", border: "1px solid var(--bt-border)",
     borderRadius: 14, padding: 18,
     boxShadow: "0 5px 18px rgba(15,23,42,.035)",
     minWidth: 0,
   },
 
-  cardEyebrow: { color: "#2563eb", fontSize: 9, fontWeight: 900, letterSpacing: 1.25 },
+  cardEyebrow: { color: "var(--bt-blue)", fontSize: 9, fontWeight: 900, letterSpacing: 1.25 },
 
   healthBody: {
     display: "flex", alignItems: "center",
@@ -2235,7 +2276,7 @@ const S = {
   },
 
   bigNumber: { fontSize: 44, lineHeight: 1, fontWeight: 950, letterSpacing: "-2px" },
-  muted: { color: "#64748b", fontSize: 10, lineHeight: 1.45 },
+  muted: { color: "var(--bt-muted)", fontSize: 10, lineHeight: 1.45 },
 
   pill: {
     display: "inline-block", borderRadius: 999,
@@ -2250,14 +2291,14 @@ const S = {
 
   ringInner: {
     width: 82, height: 82, borderRadius: "50%",
-    background: "#fff", display: "flex",
+    background: "var(--bt-surface)", display: "flex",
     flexDirection: "column", alignItems: "center",
-    justifyContent: "center", border: "1px solid #e2e8f0",
+    justifyContent: "center", border: "1px solid var(--bt-border)",
   },
 
   capacity: {
-    borderTop: "1px solid #eef2f7", marginTop: 14,
-    paddingTop: 11, fontSize: 10, color: "#64748b",
+    borderTop: "1px solid var(--bt-border-soft)", marginTop: 14,
+    paddingTop: 11, fontSize: 10, color: "var(--bt-muted)",
   },
 
   riskBody: { display: "flex", alignItems: "center", gap: 12, marginTop: 16 },
@@ -2269,14 +2310,14 @@ const S = {
   },
 
   riskLevel: { fontSize: 24, fontWeight: 900 },
-  riskTrack: { height: 7, borderRadius: 99, background: "#eef2f7", overflow: "hidden", marginTop: 17 },
+  riskTrack: { height: 7, borderRadius: 99, background: "var(--bt-border-soft)", overflow: "hidden", marginTop: 17 },
   riskFill: { height: "100%", borderRadius: 99 },
 
-  text: { color: "#64748b", fontSize: 11, lineHeight: 1.55, margin: "9px 0" },
+  text: { color: "var(--bt-muted)", fontSize: 11, lineHeight: 1.55, margin: "9px 0" },
 
   link: {
     border: 0, background: "transparent",
-    color: "#2563eb", fontSize: 11, fontWeight: 800,
+    color: "var(--bt-blue)", fontSize: 11, fontWeight: 800,
     padding: 0, cursor: "pointer",
   },
 
@@ -2286,26 +2327,26 @@ const S = {
   },
 
   bluePill: {
-    color: "#2563eb", background: "#eff6ff",
-    border: "1px solid #bfdbfe", borderRadius: 999,
+    color: "var(--bt-blue)", background: "var(--bt-blue-soft)",
+    border: "1px solid var(--bt-blue-border)", borderRadius: 999,
     padding: "4px 7px", fontSize: 8, fontWeight: 850,
   },
 
   orangePill: {
-    color: "#b45309", background: "#fffbeb",
-    border: "1px solid #fde68a", borderRadius: 999,
+    color: "var(--bt-warning)", background: "var(--bt-surface)beb",
+    border: "1px solid var(--bt-warning-border)", borderRadius: 999,
     padding: "4px 7px", fontSize: 8, fontWeight: 850,
   },
 
   verifyBox: {
     display: "flex", alignItems: "center", gap: 13,
-    padding: 11, background: "#f8fafc",
-    border: "1px solid #e2e8f0", borderRadius: 10, marginTop: 13,
+    padding: 11, background: "var(--bt-surface-2)",
+    border: "1px solid var(--bt-border)", borderRadius: 10, marginTop: 13,
   },
 
   fullButton: {
-    width: "100%", border: "1px solid #bfdbfe",
-    background: "#fff", color: "#2563eb",
+    width: "100%", border: "1px solid var(--bt-blue-border)",
+    background: "var(--bt-surface)", color: "var(--bt-blue)",
     borderRadius: 8, padding: "10px 12px",
     marginTop: 12, fontWeight: 800, fontSize: 10, cursor: "pointer",
   },
@@ -2315,12 +2356,12 @@ const S = {
   detailRow: {
     display: "flex", alignItems: "center",
     justifyContent: "space-between", gap: 15,
-    padding: "10px 0", borderBottom: "1px solid #eef2f7", fontSize: 10,
+    padding: "10px 0", borderBottom: "1px solid var(--bt-border-soft)", fontSize: 10,
   },
 
   recycle: {
     width: 42, height: 42, borderRadius: 11,
-    background: "#f0fdf4", color: "#16a34a",
+    background: "var(--bt-green-soft)", color: "var(--bt-green)",
     display: "flex", alignItems: "center",
     justifyContent: "center", fontSize: 23, margin: "13px 0 10px",
   },
@@ -2330,49 +2371,49 @@ const S = {
   scoreRow: {
     display: "flex", alignItems: "center",
     justifyContent: "space-between", gap: 10,
-    fontSize: 10, color: "#64748b", marginTop: 9,
+    fontSize: 10, color: "var(--bt-muted)", marginTop: 9,
   },
 
-  progress: { height: 7, background: "#eef2f7", borderRadius: 99, overflow: "hidden", marginTop: 8 },
-  progressFill: { height: "100%", background: "#16a34a", borderRadius: 99 },
+  progress: { height: 7, background: "var(--bt-border-soft)", borderRadius: 99, overflow: "hidden", marginTop: 8 },
+  progressFill: { height: "100%", background: "var(--bt-green)", borderRadius: 99 },
 
   factorLayout: { display: "flex", alignItems: "center", gap: 12, marginTop: 8 },
   factorRow: {
     display: "flex", justifyContent: "space-between",
-    gap: 10, fontSize: 10, color: "#475569",
-    padding: "7px 0", borderBottom: "1px solid #f1f5f9",
+    gap: 10, fontSize: 10, color: "var(--bt-text-secondary)",
+    padding: "7px 0", borderBottom: "1px solid var(--bt-border-soft-2)",
   },
 
   info: {
     marginTop: 12, padding: 9,
-    background: "#f8fafc", border: "1px solid #e2e8f0",
-    borderRadius: 8, color: "#64748b", fontSize: 9,
+    background: "var(--bt-surface-2)", border: "1px solid var(--bt-border)",
+    borderRadius: 8, color: "var(--bt-muted)", fontSize: 9,
   },
 
   mini: { display: "flex", alignItems: "center", gap: 8, minWidth: 0 },
   miniIcon: {
     width: 32, height: 32, borderRadius: 8,
-    background: "#f8fafc", border: "1px solid #e2e8f0",
+    background: "var(--bt-surface-2)", border: "1px solid var(--bt-border)",
     display: "flex", alignItems: "center",
     justifyContent: "center", flexShrink: 0,
   },
 
   sectionHeader: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 },
-  sectionTitle: { fontSize: 19, margin: "6px 0 0", color: "#172033" },
+  sectionTitle: { fontSize: 19, margin: "6px 0 0", color: "var(--bt-text)" },
 
-  sliderLabels: { display: "flex", justifyContent: "space-between", color: "#94a3b8", fontSize: 9, marginTop: 6 },
+  sliderLabels: { display: "flex", justifyContent: "space-between", color: "var(--bt-muted-2)", fontSize: 9, marginTop: 6 },
 
   selectedInfo: {
     display: "grid", gridTemplateColumns: "repeat(3,minmax(0,1fr))",
-    gap: 12, background: "#f8fafc",
-    border: "1px solid #e2e8f0", borderRadius: 10, padding: 12, marginTop: 14,
+    gap: 12, background: "var(--bt-surface-2)",
+    border: "1px solid var(--bt-border)", borderRadius: 10, padding: 12, marginTop: 14,
   },
 
   chart: { width: "100%", height: 285, marginTop: 14 },
-  noData: { textAlign: "center", padding: "70px 15px", color: "#94a3b8", fontSize: 12 },
+  noData: { textAlign: "center", padding: "70px 15px", color: "var(--bt-muted-2)", fontSize: 12 },
 
   recommendation: {
-    background: "#f8fafc", border: "1px solid #e2e8f0",
+    background: "var(--bt-surface-2)", border: "1px solid var(--bt-border)",
     borderRadius: 11, padding: 13,
   },
 
@@ -2382,9 +2423,9 @@ const S = {
   },
 
   note: {
-    padding: 15, background: "#f8fafc",
-    border: "1px solid #e2e8f0", borderRadius: 10,
-    fontSize: 11, color: "#475569",
+    padding: 15, background: "var(--bt-surface-2)",
+    border: "1px solid var(--bt-border)", borderRadius: 10,
+    fontSize: 11, color: "var(--bt-text-secondary)",
   },
 
   safetyHero: { display: "flex", alignItems: "center", gap: 15, marginTop: 15 },
@@ -2398,24 +2439,24 @@ const S = {
   riskLargeText: { fontSize: 32, fontWeight: 950 },
 
   riskTrackLarge: {
-    height: 11, background: "#eef2f7",
+    height: 11, background: "var(--bt-border-soft)",
     borderRadius: 99, overflow: "hidden", marginTop: 20,
   },
 
   warning: {
-    background: "#fffbeb", border: "1px solid #fde68a",
-    color: "#92400e", borderRadius: 9,
+    background: "var(--bt-surface)beb", border: "1px solid var(--bt-warning-border)",
+    color: "var(--bt-warning-text)", borderRadius: 9,
     padding: 11, fontSize: 10, lineHeight: 1.5, marginTop: 14,
   },
 
   metricIconLarge: {
     width: 40, height: 40, borderRadius: 10,
-    background: "#eff6ff", display: "flex",
+    background: "var(--bt-blue-soft)", display: "flex",
     alignItems: "center", justifyContent: "center",
     fontSize: 20, marginBottom: 12,
   },
 
-  metricValue: { fontSize: 25, fontWeight: 900, color: "#173b67", marginTop: 4 },
+  metricValue: { fontSize: 25, fontWeight: 900, color: "var(--bt-heading)", marginTop: 4 },
 
   modalBackdrop: {
     position: "fixed", inset: 0, zIndex: 100,
@@ -2426,7 +2467,7 @@ const S = {
 
   modal: {
     width: "min(900px,100%)", maxHeight: "92vh",
-    overflowY: "auto", background: "#fff",
+    overflowY: "auto", background: "var(--bt-surface)",
     borderRadius: 16, padding: 22,
     boxShadow: "0 30px 80px rgba(15,23,42,.3)",
   },
@@ -2435,8 +2476,8 @@ const S = {
 
   close: {
     width: 36, height: 36, borderRadius: 8,
-    border: "1px solid #e2e8f0", background: "#fff",
-    fontSize: 21, color: "#64748b", cursor: "pointer",
+    border: "1px solid var(--bt-border)", background: "var(--bt-surface)",
+    fontSize: 21, color: "var(--bt-muted)", cursor: "pointer",
   },
 
   passportGrid: {
@@ -2445,105 +2486,105 @@ const S = {
   },
 
   passportQR: {
-    border: "1px solid #e2e8f0", borderRadius: 12,
+    border: "1px solid var(--bt-border)", borderRadius: 12,
     padding: 16, display: "flex",
     flexDirection: "column", alignItems: "center",
-    gap: 8, background: "#f8fafc",
+    gap: 8, background: "var(--bt-surface-2)",
   },
 
   passportDetails: {
-    border: "1px solid #e2e8f0",
+    border: "1px solid var(--bt-border)",
     borderRadius: 12, padding: "8px 14px",
   },
 
   passportRow: {
     display: "flex", justifyContent: "space-between",
     gap: 15, padding: "11px 0",
-    borderBottom: "1px solid #eef2f7", fontSize: 10,
+    borderBottom: "1px solid var(--bt-border-soft)", fontSize: 10,
   },
 
   factorBox: {
     display: "flex", justifyContent: "space-between",
     gap: 10, padding: 11,
-    background: "#f8fafc", border: "1px solid #e2e8f0",
+    background: "var(--bt-surface-2)", border: "1px solid var(--bt-border)",
     borderRadius: 9, fontSize: 10,
   },
 
   passportWarning: {
     marginTop: 18, padding: 13, borderRadius: 10,
-    background: "#fefce8", border: "1px solid #fde68a",
-    color: "#854d0e", fontSize: 10, lineHeight: 1.55,
+    background: "var(--bt-warning-bg)", border: "1px solid var(--bt-warning-border)",
+    color: "var(--bt-warning-text)", fontSize: 10, lineHeight: 1.55,
   },
 
   actionsLight: { display: "flex", gap: 9, marginTop: 18, flexWrap: "wrap" },
 
   greenButtonLight: {
     border: 0, borderRadius: 8, padding: "10px 14px",
-    background: "#16a34a", color: "#fff",
+    background: "var(--bt-green)", color: "var(--bt-surface)",
     fontWeight: 850, fontSize: 10, cursor: "pointer",
   },
 
   blueButton: {
     border: 0, borderRadius: 8, padding: "10px 14px",
-    background: "#2563eb", color: "#fff",
+    background: "var(--bt-blue)", color: "var(--bt-surface)",
     fontWeight: 850, fontSize: 10, cursor: "pointer",
   },
 
   drop: {
-    minHeight: 150, border: "2px dashed #bfdbfe",
-    borderRadius: 13, background: "#eff6ff",
+    minHeight: 150, border: "2px dashed var(--bt-blue-border)",
+    borderRadius: 13, background: "var(--bt-blue-soft)",
     display: "flex", flexDirection: "column",
     alignItems: "center", justifyContent: "center",
-    gap: 5, color: "#2563eb", cursor: "pointer",
+    gap: 5, color: "var(--bt-blue)", cursor: "pointer",
     textAlign: "center", padding: 20,
   },
 
   importResult: {
     marginTop: 15, padding: 13,
-    border: "1px solid #e2e8f0",
-    borderRadius: 10, background: "#f8fafc",
+    border: "1px solid var(--bt-border)",
+    borderRadius: 10, background: "var(--bt-surface-2)",
   },
 
   table: { width: "100%", borderCollapse: "collapse", fontSize: 10, marginTop: 10 },
-  th: { textAlign: "left", padding: 8, borderBottom: "1px solid #cbd5e1" },
-  td: { padding: 8, borderBottom: "1px solid #e2e8f0" },
+  th: { textAlign: "left", padding: 8, borderBottom: "1px solid var(--bt-border-strong)" },
+  td: { padding: 8, borderBottom: "1px solid var(--bt-border)" },
 
   error: {
     marginBottom: 13, padding: "10px 12px",
-    border: "1px solid #fed7aa", background: "#fff7ed",
-    color: "#c2410c", borderRadius: 9,
+    border: "1px solid var(--bt-error-border)", background: "var(--bt-surface)7ed",
+    color: "var(--bt-error-text)", borderRadius: 9,
     fontSize: 11, display: "flex",
     alignItems: "center", gap: 7,
   },
 
   errorClose: {
     marginLeft: "auto", border: 0,
-    background: "transparent", color: "#c2410c",
+    background: "transparent", color: "var(--bt-error-text)",
     cursor: "pointer", fontSize: 18,
   },
 
   footer: {
     display: "flex", justifyContent: "space-between",
     gap: 12, flexWrap: "wrap",
-    padding: "20px 3px 0", color: "#94a3b8", fontSize: 9,
+    padding: "20px 3px 0", color: "var(--bt-muted-2)", fontSize: 9,
   },
 
   loading: {
-    minHeight: "100vh", background: "#f5f7fb",
+    minHeight: "100vh", background: "var(--bt-bg)",
     display: "flex", flexDirection: "column",
     alignItems: "center", justifyContent: "center",
-    textAlign: "center", color: "#172033",
+    textAlign: "center", color: "var(--bt-text)",
   },
 
   loader: {
-    width: 34, height: 34, border: "3px solid #dbe3ec",
-    borderTop: "3px solid #2563eb", borderRadius: "50%",
+    width: 34, height: 34, border: "3px solid var(--bt-border)",
+    borderTop: "3px solid var(--bt-blue)", borderRadius: "50%",
     marginTop: 18, animation: "btspin 1s linear infinite",
   },
 
   scanner: {
     position: "fixed", inset: 0, zIndex: 100,
-    background: "#fff", padding: 18, overflowY: "auto",
+    background: "var(--bt-surface)", padding: 18, overflowY: "auto",
   },
 
   scannerTop: {
@@ -2554,14 +2595,14 @@ const S = {
   camera: {
     position: "relative", maxWidth: 520,
     margin: "0 auto", borderRadius: 14,
-    overflow: "hidden", background: "#f1f5f9",
-    border: "1px solid #dbe3ec",
+    overflow: "hidden", background: "var(--bt-border-soft-2)",
+    border: "1px solid var(--bt-border)",
   },
 
   scannerFrame: {
     position: "absolute", left: "20%", top: "20%",
     width: "60%", height: "60%",
-    border: "3px solid #16a34a",
+    border: "3px solid var(--bt-green)",
     borderRadius: 12, pointerEvents: "none",
     boxShadow: "0 0 0 9999px rgba(15,23,42,.08)",
   },
@@ -2569,8 +2610,8 @@ const S = {
   cancel: {
     display: "block", margin: "18px auto",
     padding: "11px 28px", borderRadius: 8,
-    border: "1px solid #cbd5e1",
-    background: "#fff", color: "#334155",
+    border: "1px solid var(--bt-border-strong)",
+    background: "var(--bt-surface)", color: "var(--bt-text-secondary)",
     fontWeight: 750, cursor: "pointer",
   },
 };

@@ -75,13 +75,13 @@ function SOHChart({ batteryId }) {
               >
                 <stop
                   offset="0%"
-                  stopColor="#38bdf8"
+                  stopColor="var(--bt-chart-cyan)"
                   stopOpacity={0.25}
                 />
 
                 <stop
                   offset="100%"
-                  stopColor="#38bdf8"
+                  stopColor="var(--bt-chart-cyan)"
                   stopOpacity={0}
                 />
               </linearGradient>
@@ -89,7 +89,7 @@ function SOHChart({ batteryId }) {
             </defs>
 
             <CartesianGrid
-              stroke="#e8eef5"
+              stroke="var(--bt-chart-grid)"
               strokeDasharray="4 4"
               vertical={false}
             />
@@ -97,11 +97,11 @@ function SOHChart({ batteryId }) {
             <XAxis
               dataKey="cycle"
               tick={{
-                fill: "#8290a3",
+                fill: "var(--bt-chart-muted)",
                 fontSize: 10,
               }}
               axisLine={{
-                stroke: "#dce4ec",
+                stroke: "var(--bt-border)",
               }}
               tickLine={false}
             />
@@ -109,7 +109,7 @@ function SOHChart({ batteryId }) {
             <YAxis
               domain={[0, 100]}
               tick={{
-                fill: "#8290a3",
+                fill: "var(--bt-chart-muted)",
                 fontSize: 10,
               }}
               axisLine={false}
@@ -118,18 +118,18 @@ function SOHChart({ batteryId }) {
 
             <Tooltip
               contentStyle={{
-                background: "#ffffff",
-                border: "1px solid #dce5ee",
+                background: "var(--bt-surface)",
+                border: "1px solid var(--bt-border)",
                 borderRadius: "12px",
                 boxShadow:
                   "0 8px 25px rgba(30,50,80,0.10)",
               }}
               labelStyle={{
-                color: "#526174",
+                color: "var(--bt-text-secondary)",
                 fontWeight: 700,
               }}
               itemStyle={{
-                color: "#1687c5",
+                color: "var(--bt-chart-blue)",
                 fontWeight: 700,
               }}
               formatter={(value) => [
@@ -141,13 +141,13 @@ function SOHChart({ batteryId }) {
             <Line
               type="monotone"
               dataKey="soh"
-              stroke="#1687c5"
+              stroke="var(--bt-chart-blue)"
               strokeWidth={3}
               dot={false}
               activeDot={{
                 r: 6,
-                fill: "#ffffff",
-                stroke: "#1687c5",
+                fill: "var(--bt-surface)",
+                stroke: "var(--bt-chart-blue)",
                 strokeWidth: 3,
               }}
             />
@@ -169,8 +169,8 @@ function SOHChart({ batteryId }) {
 const styles = {
 
   card: {
-    background: "#ffffff",
-    border: "1px solid #e5eaf0",
+    background: "var(--bt-surface)",
+    border: "1px solid var(--bt-border)",
     borderRadius: "22px",
     padding: "18px 14px 14px",
     boxShadow:
@@ -187,7 +187,7 @@ const styles = {
 
   label: {
     margin: 0,
-    color: "#8a97a8",
+    color: "var(--bt-chart-muted-2)",
     fontSize: "9px",
     fontWeight: 800,
     letterSpacing: "1px",
@@ -196,14 +196,14 @@ const styles = {
   title: {
     margin: "4px 0 0",
     fontSize: "17px",
-    color: "#172033",
+    color: "var(--bt-text)",
   },
 
   legend: {
     display: "flex",
     alignItems: "center",
     gap: "5px",
-    color: "#68778a",
+    color: "var(--bt-chart-secondary)",
     fontSize: "10px",
     fontWeight: 700,
   },
@@ -212,7 +212,7 @@ const styles = {
     width: "8px",
     height: "8px",
     borderRadius: "50%",
-    background: "#1687c5",
+    background: "var(--bt-chart-blue)",
   },
 
   chartContainer: {
@@ -221,7 +221,7 @@ const styles = {
   },
 
   bottomText: {
-    color: "#9aa6b5",
+    color: "var(--bt-muted-2)",
     fontSize: "9px",
     marginTop: "5px",
     textAlign: "center",

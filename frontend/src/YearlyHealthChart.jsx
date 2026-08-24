@@ -204,29 +204,29 @@ function YearlyHealthChart({ batteryId }) {
 
           <CartesianGrid
             strokeDasharray="3 3"
-            stroke="#263752"
+            stroke="var(--bt-chart-grid)"
           />
 
           <XAxis
             dataKey="label"
-            stroke="#94a3b8"
+            stroke="var(--bt-chart-muted)"
           />
 
           <YAxis
             domain={[0, 100]}
-            stroke="#94a3b8"
+            stroke="var(--bt-chart-muted)"
             label={{
               value: "SOH (%)",
               angle: -90,
               position: "insideLeft",
-              fill: "#94a3b8",
+              fill: "var(--bt-chart-muted)",
             }}
           />
 
           <Tooltip
             contentStyle={{
-              background: "#111d2e",
-              border: "1px solid #263752",
+              background: "var(--bt-chart-soft)",
+              border: "1px solid var(--bt-chart-grid)",
               borderRadius: "10px",
               color: "white",
             }}
@@ -249,8 +249,8 @@ function YearlyHealthChart({ batteryId }) {
                 key={`cell-${index}`}
                 fill={
                   index === selectedYear
-                    ? "#38bdf8"
-                    : "#315477"
+                    ? "var(--bt-chart-cyan)"
+                    : "var(--bt-chart-blue-dark)"
                 }
               />
             ))}
@@ -337,11 +337,11 @@ function YearlyHealthChart({ batteryId }) {
 const styles = {
 
   card: {
-    background: "#111d2e",
+    background: "var(--bt-chart-soft)",
     borderRadius: "20px",
     padding: "30px",
     marginTop: "25px",
-    border: "1px solid #1e3552",
+    border: "1px solid var(--bt-border)",
   },
 
   title: {
@@ -352,13 +352,13 @@ const styles = {
   },
 
   subtitle: {
-    color: "#94a3b8",
+    color: "var(--bt-chart-muted)",
     textAlign: "center",
     marginBottom: "25px",
   },
 
   message: {
-    color: "#94a3b8",
+    color: "var(--bt-chart-muted)",
     textAlign: "center",
     padding: "40px",
   },
@@ -367,11 +367,11 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    background: "#172337",
+    background: "var(--bt-chart-surface)",
     borderRadius: "16px",
     padding: "22px 28px",
     marginBottom: "20px",
-    border: "1px solid #263752",
+    border: "1px solid var(--bt-chart-grid)",
   },
 
   selectedLeft: {
@@ -379,7 +379,7 @@ const styles = {
   },
 
   smallLabel: {
-    color: "#7f91aa",
+    color: "var(--bt-chart-muted-2)",
     fontSize: "12px",
     letterSpacing: "2px",
     fontWeight: "600",
@@ -393,7 +393,7 @@ const styles = {
   },
 
   status: {
-    color: "#38bdf8",
+    color: "var(--bt-chart-cyan)",
     fontWeight: "600",
     marginTop: "7px",
     marginBottom: 0,
@@ -418,15 +418,15 @@ const styles = {
   },
 
   detailCard: {
-    background: "#172337",
+    background: "var(--bt-chart-surface)",
     borderRadius: "12px",
     padding: "16px",
     textAlign: "center",
-    border: "1px solid #263752",
+    border: "1px solid var(--bt-chart-grid)",
   },
 
   detailLabel: {
-    color: "#7f91aa",
+    color: "var(--bt-chart-muted-2)",
     fontSize: "12px",
     marginBottom: "8px",
   },
@@ -438,7 +438,7 @@ const styles = {
   sliderSection: {
     marginTop: "20px",
     padding: "20px",
-    background: "#0d1929",
+    background: "var(--bt-chart-deep)",
     borderRadius: "15px",
   },
 
@@ -446,14 +446,14 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    color: "#94a3b8",
+    color: "var(--bt-chart-muted)",
     marginBottom: "15px",
   },
 
   slider: {
     width: "100%",
     cursor: "pointer",
-    accentColor: "#38bdf8",
+    accentColor: "var(--bt-chart-cyan)",
   },
 
   yearDots: {
@@ -466,17 +466,17 @@ const styles = {
 
   yearButton: {
     background: "transparent",
-    border: "1px solid #263752",
-    color: "#94a3b8",
+    border: "1px solid var(--bt-chart-grid)",
+    color: "var(--bt-chart-muted)",
     borderRadius: "8px",
     padding: "6px 12px",
     cursor: "pointer",
   },
 
   activeYearButton: {
-    background: "#38bdf8",
-    color: "#07111f",
-    border: "1px solid #38bdf8",
+    background: "var(--bt-chart-cyan)",
+    color: "var(--bt-bg)",
+    border: "1px solid var(--bt-chart-cyan)",
     fontWeight: "700",
   },
 
